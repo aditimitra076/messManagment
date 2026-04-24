@@ -1,17 +1,32 @@
+import React from "react";
 import "./LoginPage.css";
+import LoginForm from "../../components/LoginForm/LoginForm";
 
-function LoginPage() {
+const LoginPage = () => {
   return (
-    <div className="login-container">
-      <h2>Login</h2>
+    <div className="login-page">
 
-      <form>
-        <input type="text" placeholder="Username" />
-        <input type="password" placeholder="Password" />
-        <button type="submit">Login</button>
-      </form>
+      {/* Navbar */}
+      <div className="login-navbar">
+        <h2>MessMaster Pro</h2>
+        <span>University of Hyderabad • Student Portal</span>
+      </div>
+
+      {/* Center Form */}
+      <div className="login-container">
+        <LoginForm />
+      </div>
+
+      {/* Footer */}
+      <div className="login-footer">
+        <p>Secure • Instant • Official</p>
+        <p className="terms">
+          By signing in, you agree to Terms of Service
+        </p>
+      </div>
+
     </div>
   );
-}
+};
 
 export default LoginPage;

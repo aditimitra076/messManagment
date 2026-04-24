@@ -1,12 +1,23 @@
-import "./HomePage.css";
+import React from "react";
 
-function HomePage() {
+import Hero from "../../components/Hero/Hero";
+import Features from "../../components/Features/Features";
+import Roles from "../../components/Roles/Roles";
+import CTA from "../../components/CTA/CTA";
+import Footer from "../../components/Footer/Footer";
+//import Navbar from "../../components/Navbar/Navbar";
+
+const HomePage = () => {
   return (
-    <div className="home-container">
-      <h1>Welcome to Mess Management System</h1>
-      <p>Manage your meals efficiently</p>
-    </div>
+    <>
+      
+      <Hero />
+      <Features />
+      <Roles />
+      <CTA />
+      <Footer />
+    </>
   );
-}
+};
 
 export default HomePage;
