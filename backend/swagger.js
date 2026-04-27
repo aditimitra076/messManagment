@@ -8,11 +8,13 @@ const options = {
       version: "1.0.0",
       description: "API documentation for Mess Management System",
     },
+
     servers: [
       {
         url: "http://localhost:5000",
       },
     ],
+
     components: {
       securitySchemes: {
         bearerAuth: {
@@ -22,9 +24,20 @@ const options = {
         },
       },
     },
-    security: [{ bearerAuth: [] }],
+
+    //  global auth (applies to all APIs unless overridden)
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
   },
-  apis: ["./routes/*.js"], 
+
+  //  IMPORTANT CHANGE (for your new structure)
+  apis: [
+    "./routes/*.js",   // keep route-level docs
+    "./docs/*.js"      //  ADD THIS (your new modular docs)
+  ],
 };
 
 const swaggerSpec = swaggerJSDoc(options);

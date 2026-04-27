@@ -4,13 +4,14 @@ import sqlInit from "./db/db.init.js";
 
 import userRoutes from "./routes/user.route.js";
 import wardenRoutes from "./routes/warden.route.js";
-
 import messRoutes from "./routes/mess.routs.js";
+
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./swagger.js";
+
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
-import cors from "cors";  
+import cors from "cors";
 
 dotenv.config();
 
@@ -23,15 +24,22 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json());
 app.use(cookieParser());
 
-
 app.use(cors({
-  origin: "*",   // for dev (allow all)
+  origin: "*",
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
 
-// Swagger
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+// ======================================================
+//  SWAGGER (ONLY ADDITION - SAFE)
+// ======================================================
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec, {
+    explorer: true
+  })
+);
 
 // --------------------
 // DB CONNECTION (POOL)
@@ -48,13 +56,13 @@ export const pool = mysql.createPool({
 });
 
 // --------------------
-// DB INIT (Docker Safe)
+// DB INIT
 // --------------------
 async function connectDB() {
   while (true) {
     try {
       const conn = await pool.getConnection();
-      console.log("✅ MySQL connected");
+      console.log(" MySQL connected");
 
       const [rows] = await conn.query(`
         SELECT SCHEMA_NAME 
@@ -64,17 +72,17 @@ async function connectDB() {
 
       if (rows.length === 0) {
         await conn.query(sqlInit);
-        console.log("🆕 Fresh DB initialized");
+        console.log(" Fresh DB initialized");
       } else {
         await conn.query("USE mess_management");
-        console.log("📦 DB exists:", rows[0].SCHEMA_NAME);
+        console.log(" DB exists:", rows[0].SCHEMA_NAME);
       }
 
       conn.release();
       break;
 
     } catch (err) {
-      console.log("⏳ Waiting for DB..." + err.message);
+      console.log(" Waiting for DB..." + err.message);
       await new Promise(res => setTimeout(res, 2000));
     }
   }
@@ -83,13 +91,12 @@ async function connectDB() {
 // --------------------
 // ROUTES
 // --------------------
-app.use("/api/users", userRoutes);     // Auth routes
-app.use("/api/warden", wardenRoutes);  // Warden routes
-app.use("/api/mess", messRoutes);     // mess card roue
-
+app.use("/api/users", userRoutes);
+app.use("/api/warden", wardenRoutes);
+app.use("/api/mess", messRoutes);
 
 // --------------------
-// GLOBAL ERROR HANDLER
+// ERROR HANDLER
 // --------------------
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -103,7 +110,7 @@ async function startServer() {
   await connectDB();
 
   app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(` Server running on port ${PORT}`);
   });
 }
 
