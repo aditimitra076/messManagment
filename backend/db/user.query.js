@@ -90,6 +90,71 @@ const queries = {
     SET status = 'CLOSED', close_date = CURDATE()
     WHERE student_id = ? AND status = 'ACTIVE';
   `,
+  messCardIntervals: `
+  SELECT 
+      student_id,
+      GREATEST(open_date, ?) AS open_date,
+      LEAST(close_date, ?) AS close_date,
+      GREATEST(
+          0,
+          DATEDIFF(
+              LEAST(close_date, ?),
+              GREATEST(open_date, ?)
+          ) + 1
+      ) AS days
+  FROM (
+      SELECT 
+          student_id,
+          open_date,
+          IFNULL(close_date, CURRENT_DATE) AS close_date
+      FROM mess_card
+
+      UNION ALL
+
+      SELECT 
+          student_id,
+          open_date,
+          close_date
+      FROM mess_card_history
+  ) AS intervals
+  WHERE student_id = ?
+  AND open_date <= ?
+  AND close_date >= ?;
+  `,
+
+  messCardSummary: `
+  SELECT 
+      IFNULL(SUM(days),0) AS total_active_days,
+      COUNT(*) AS total_open_intervals
+  FROM (
+      SELECT 
+          GREATEST(
+              0,
+              DATEDIFF(
+                  LEAST(close_date, ?),
+                  GREATEST(open_date, ?)
+              ) + 1
+          ) AS days
+      FROM (
+          SELECT 
+              student_id,
+              open_date,
+              IFNULL(close_date, CURRENT_DATE) AS close_date
+          FROM mess_card
+
+          UNION ALL
+
+          SELECT 
+              student_id,
+              open_date,
+              close_date
+          FROM mess_card_history
+      ) AS intervals
+      WHERE student_id = ?
+      AND open_date <= ?
+      AND close_date >= ?
+  ) t;
+  `,
 
   // =========================================
   // HISTORY

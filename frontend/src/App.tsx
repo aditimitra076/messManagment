@@ -1,55 +1,60 @@
- /* import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 
 import HomePage from "./pages/HomePage/HomePage";
 import LoginPage from "./pages/LoginPage/LoginPage";
+import AdminDashboard from "./pages/AdminDashboard/AdminDashboard";
+import ChiefWardenPanel from "./pages/ChiefWardenPanel/ChiefWardenPanel";
+//import StudentDashboard from "./pages/StudentDashboard/StudentDashboard";
+//import SupervisorPanel from "./pages/SupervisorPanel/SupervisorPanel";
 
 import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
 
+// Wrapper for layout control
+const AppContent = () => {
+  const location = useLocation();
 
-function App() {
+  // ✅ Define all dashboard-type routes
+  const dashboardRoutes = [
+    "/admin",
+    "/chief-warden",
+    "/student",
+    "/supervisor"
+  ];
+
+  // Check if current route is a dashboard page
+  const isDashboardPage = dashboardRoutes.some(path =>
+    location.pathname.startsWith(path)
+  );
+
   return (
-    <Router>
-      <Navbar />
+    <>
+      {/* Hide Navbar on dashboard pages */}
+      {!isDashboardPage && <Navbar />}
 
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
-    
+
+        {/* Dashboards */}
+        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/chief-warden" element={<ChiefWardenPanel />} />
+        {/* <Route path="/student" element={<StudentDashboard />} />
+        <Route path="/supervisor" element={<SupervisorPanel />} /> */}
+        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
 
-      <Footer />
-    </Router>
+      {/* Hide Footer on dashboard pages */}
+      {!isDashboardPage && <Footer />}
+    </>
   );
-}
-
-export default App;*/
-
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import HomePage from "./pages/HomePage/HomePage";
-import LoginPage from "./pages/LoginPage/LoginPage";
-import Navbar from "./components/Navbar/Navbar";
-import Footer from "./components/Footer/Footer";
-
-// 1. Import your Provider
-import { ModalProvider } from "./contextAPI/ModalContext";
+};
 
 function App() {
   return (
-    // 2. Wrap the app with the Provider
-    <ModalProvider>
-      <Router>
-        <Navbar />
-
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<LoginPage />} />
-        </Routes>
-
-        <Footer />
-      </Router>
-    </ModalProvider>
+    <Router>
+      <AppContent />
+    </Router>
   );
 }
 

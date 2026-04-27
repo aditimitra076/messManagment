@@ -5,11 +5,12 @@ import sqlInit from "./db/db.init.js";
 import userRoutes from "./routes/user.route.js";
 import wardenRoutes from "./routes/warden.route.js";
 
+import messRoutes from "./routes/mess.routs.js";
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./swagger.js";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
-import cors from "cors";   // ✅ IMPORTANT
+import cors from "cors";  
 
 dotenv.config();
 
@@ -22,7 +23,7 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json());
 app.use(cookieParser());
 
-// ✅ FIXED CORS (main issue)
+
 app.use(cors({
   origin: "*",   // for dev (allow all)
   methods: ["GET", "POST", "PUT", "DELETE"],
@@ -84,6 +85,8 @@ async function connectDB() {
 // --------------------
 app.use("/api/users", userRoutes);     // Auth routes
 app.use("/api/warden", wardenRoutes);  // Warden routes
+app.use("/api/mess", messRoutes);     // mess card roue
+
 
 // --------------------
 // GLOBAL ERROR HANDLER

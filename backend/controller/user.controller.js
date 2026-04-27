@@ -63,8 +63,9 @@ async function sendOtp(req, res) {
   }
 }
 
-/* ===================== VERIFY OTP ===================== */
-async function verifyOtp(req, res) {
+
+
+async function verifyOtpEndpoint(req, res) {
   const { otp, token, role } = req.body;
 
   try {
@@ -169,7 +170,7 @@ async function getAllStaff(req, res) {
 /* ===================== EXPORT ===================== */
 export {
   sendOtp,
-  verifyOtp,
+ verifyOtpEndpoint as  verifyOtp  ,
   logout,
   addStaff,
   getAllStaff
