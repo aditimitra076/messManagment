@@ -1,4 +1,4 @@
-import { Router } from "express";
+ import { Router } from "express";
 import { sendOtp, verifyOtp , logout } from "../controller/user.controller.js";
 import { allowRoles } from "../middleware/role.js";
 
@@ -117,9 +117,5 @@ router.post("/verify-otp", verifyOtp);
  *               message: Logged out
  */
 router.post("/logout", logout);
-
-
-
-
 
 export default router;
