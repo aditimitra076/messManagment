@@ -91,7 +91,7 @@ router.post(
 //  ADD STUDENT TO SPECIAL MEAL
 // ======================================================
 router.post(
-  "/add-special-meal/:id",   //  removed space
+  "/add-special-meal/:id",   
   authMiddleware,
   allowRoles("MESS_SECRETARY"),
   messController.addSpecialMealStudent

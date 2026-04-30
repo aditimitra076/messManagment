@@ -57,27 +57,31 @@ const MessSecretaryDashboard = () => {
   }, []);
 
   const fetchMessSecretaryData = async () => {
-    try {
-      setLoading(true);
-      const [activeRes, netRes, rationRes, mealsRes, expenseRes] = await Promise.all([
-        getActiveCards(),
-        getNetCard(),
-        getRation(),
-        getSpecialMeals(),
-        getWeeklyExpense()
-      ]);
+  try {
+    setLoading(true);
+    const [activeRes, netRes, rationRes, mealsRes, expenseRes] = await Promise.all([
+      getActiveCards(new Date().toISOString().split("T")[0]),
+      getNetCard(),
+      getRation(new Date().getMonth() + 1, new Date().getFullYear()),
+      getSpecialMeals(),
+      getWeeklyExpense(new Date().getMonth() + 1, new Date().getFullYear())
+    ]);
 
-      setActiveCards(activeRes.data?.count || 0);
-      setNetCardData(netRes.data);
-      setRations(rationRes.data || []);
-      setSpecialMeals(mealsRes.data || []);
-      setWeeklyExpenses(expenseRes.data || []);
-    } catch (error) {
-      console.error("Error fetching mess secretary data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    console.log("API Responses:", { activeRes, netRes, rationRes, mealsRes, expenseRes });
+
+    setActiveCards(activeRes.data?.count || 0);
+    setNetCardData(netRes.data);
+    setRations(rationRes.data?.data ?? []);
+    setSpecialMeals(mealsRes.data?.data ?? []);
+    setWeeklyExpenses(expenseRes.data?.data ?? []);
+  } catch (error) {
+    console.error("Error fetching mess secretary data:", error);
+  } finally {
+    setLoading(false);
+  }
+};
+
+  console.log(rations , specialMeals , weeklyExpenses);
 
   const handleAddRation = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -136,7 +140,9 @@ const MessSecretaryDashboard = () => {
     return <div className="mess-secretary-dashboard">Loading...</div>;
   }
 
-  const totalExpenses = weeklyExpenses.reduce((sum, exp) => sum + (exp.amount || 0), 0);
+  const totalExpenses = Array.isArray(weeklyExpenses)
+  ? weeklyExpenses.reduce((sum, exp) => sum + Number(exp.amount || 0), 0)
+  : 0;
 
   return (
     <div className="mess-secretary-dashboard">
