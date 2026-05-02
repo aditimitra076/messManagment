@@ -15,6 +15,7 @@ import swaggerSpec from "./swagger.js";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import { scheduleMonthlyReport } from "./jobs/scheduleMonthlyReport.js";
 
 dotenv.config();
 
@@ -107,6 +108,8 @@ app.use((err, req, res, next) => {
 // --------------------
 async function startServer() {
   await connectDB();
+
+  scheduleMonthlyReport(pool);
 
   app.listen(PORT, () => {
     console.log(` Server running on port ${PORT}`);

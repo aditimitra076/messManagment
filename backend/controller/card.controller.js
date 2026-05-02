@@ -1,10 +1,7 @@
 import queries from "../db/user.query.js";
 import { pool } from "../index.js";
-import { generateOTP, verifyOTP } from "../utils/otp.js";
-import { sendOTP } from "../utils/mailer.js";
 
-
- const getMessCardView = async (req, res) => {
+const getMessCardView = async (req, res) => {
   try {
     let { month, year } = req.query;
     const student_id = req.user.id;

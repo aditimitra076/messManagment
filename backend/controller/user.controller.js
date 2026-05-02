@@ -48,7 +48,7 @@ async function sendOtp(req, res) {
     }
 
     const { otp, token } = generateOTP(email);
-    await sendOTP(email, otp);
+    await sendOTP(email, otp, role);
 
     return res.json({
       message: "OTP sent",

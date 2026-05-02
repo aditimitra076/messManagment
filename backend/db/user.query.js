@@ -364,6 +364,57 @@ WHERE s.hostel_id = ?;
 
   getExpensesByHostel: `
     SELECT * FROM daily_expense WHERE hostel_id = ? ORDER BY date DESC
+  `,
+
+  // =========================================
+  // MONTHLY REPORT (CRON — 15th email)
+  // =========================================
+
+  getWardenEmailsByHostel: `
+    SELECT email FROM staff
+    WHERE hostel_id = ?
+      AND email IS NOT NULL
+      AND TRIM(email) <> ''
+      AND UPPER(TRIM(role)) = 'WARDEN';
+  `,
+
+  getMonthlyBillSummaryByHostel: `
+    SELECT
+      COALESCE(SUM(b.total_amount), 0) AS total_billed,
+      COALESCE(SUM(CASE WHEN UPPER(TRIM(b.payment_status)) = 'PAID' THEN b.total_amount ELSE 0 END), 0) AS total_paid,
+      COUNT(b.bill_id) AS bill_rows
+    FROM bill b
+    INNER JOIN student s ON b.student_id = s.student_id
+    WHERE s.hostel_id = ? AND b.month = ? AND b.year = ?;
+  `,
+
+  getMonthlyDailyExpenseTotalByHostel: `
+    SELECT COALESCE(SUM(normal_expense), 0) AS total_daily_expense
+    FROM daily_expense
+    WHERE hostel_id = ? AND YEAR(date) = ? AND MONTH(date) = ?;
+  `,
+
+  getMonthlyFeedbackAvgByHostel: `
+    SELECT
+      AVG(f.food_rating) AS avg_food,
+      AVG(f.hygiene_rating) AS avg_hygiene,
+      COUNT(*) AS feedback_count
+    FROM feedback f
+    INNER JOIN student s ON f.student_id = s.student_id
+    WHERE s.hostel_id = ?
+      AND YEAR(f.date) = ?
+      AND MONTH(f.date) = ?;
+  `,
+
+  getMonthlySpecialMealsSummaryByHostel: `
+    SELECT
+      COALESCE(SUM(total_cost), 0) AS special_cost,
+      COALESCE(SUM(total_plates), 0) AS special_plates,
+      COUNT(*) AS special_events
+    FROM special_meal
+    WHERE hostel_id = ?
+      AND YEAR(date) = ?
+      AND MONTH(date) = ?;
   `
 };
 
